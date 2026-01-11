@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Custom styles for OCaml syntax highlighting in output */
+.ocaml-output {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
+
+.ocaml-output .keyword {
+  color: #cf222e;
+  font-weight: 600;
+}
+
+.ocaml-output .type {
+  color: #8250df;
+}
+
+.ocaml-output .value {
+  color: #0550ae;
+}
+
+.ocaml-output .string {
+  color: #0a3069;
+}
+
+.ocaml-output .error {
+  color: #cf222e;
+}
+
+/* Monaco editor customizations */
+.monaco-editor {
+  border-radius: 0.5rem;
+}
+
+/* Exercise card hover effects */
+.exercise-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.exercise-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
