@@ -49,6 +49,7 @@ export const translations = {
     clickRunTests: 'Click "Run Tests" to execute your code',
     runningOCaml: 'Running OCaml code...',
     success: 'Success!',
+    syntaxOk: 'Syntax OK (tests not verified)',
     error: 'Error',
     exerciseNotFound: 'Exercise not found',
     
@@ -111,6 +112,7 @@ export const translations = {
     clickRunTests: 'Cliquez sur "Exécuter les Tests" pour exécuter votre code',
     runningOCaml: 'Exécution du code OCaml...',
     success: 'Succès !',
+    syntaxOk: 'Syntaxe OK (tests non vérifiés)',
     error: 'Erreur',
     exerciseNotFound: 'Exercice non trouvé',
     
