@@ -38,15 +38,15 @@ function OutputPanel({ result, isRunning }: OutputPanelProps) {
 
   return (
     <div className={`bg-gray-900 rounded-lg p-4 font-mono text-sm h-48 overflow-auto ${
-      result.success ? 'border-l-4 border-yellow-500' : 'border-l-4 border-red-500'
+      result.success ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500'
     }`}>
       <div className="flex items-center space-x-2 mb-2">
         {result.success ? (
           <>
-            <svg className="h-5 w-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <span className="text-yellow-500 font-semibold">{t('syntaxOk')}</span>
+            <span className="text-green-500 font-semibold">{t('success')}</span>
           </>
         ) : (
           <>
@@ -323,7 +323,18 @@ export default function ExerciseView() {
                 height="350px"
               />
               
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex justify-between items-center">
+                <a
+                  href={`https://try.ocaml.pro/#code=${encodeURIComponent(code + '\n\n' + exercise.tests)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400"
+                >
+                  <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  {t('testOnTryOCaml')}
+                </a>
                 <button
                   onClick={handleRun}
                   disabled={isRunning}
