@@ -180,9 +180,9 @@ export default function ExerciseView() {
     }
   }, [exercise, id]);
 
-  const handleShowSolution = useCallback(() => {
+  const handleToggleSolution = useCallback(() => {
     if (exercise) {
-      setShowSolution(true);
+      setShowSolution(prev => !prev);
     }
   }, [exercise]);
 
@@ -290,11 +290,10 @@ export default function ExerciseView() {
                   {t('solution')}
                 </h2>
                 <button
-                  onClick={handleShowSolution}
+                  onClick={handleToggleSolution}
                   className="text-xs sm:text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400"
-                  disabled={showSolution}
                 >
-                  {showSolution ? t('showingSolution') : t('revealSolution')}
+                  {showSolution ? t('hideSolution') : t('revealSolution')}
                 </button>
               </div>
               
