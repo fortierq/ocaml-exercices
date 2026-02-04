@@ -208,17 +208,17 @@ export default function ExerciseView() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen lg:h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm flex-shrink-0">
-        <div className="px-4 sm:px-6 lg:px-8 py-3">
+        <div className="px-4 sm:px-6 lg:px-8 py-3 pt-14 lg:pt-3">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
                 {localizedExercise.title}
               </h1>
               <div className="flex items-center space-x-2 mt-1">
-                <span className="text-sm text-gray-500 dark:text-gray-400">
+                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   {localizedExercise.category}
                 </span>
                 <span className="text-gray-300 dark:text-gray-600">•</span>
@@ -230,29 +230,29 @@ export default function ExerciseView() {
       </header>
 
       {/* Main content - fills remaining height */}
-      <main className="flex-1 overflow-hidden p-4">
-        <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <main className="flex-1 overflow-auto lg:overflow-hidden p-3 sm:p-4">
+        <div className="h-full flex flex-col lg:grid lg:grid-cols-3 gap-3 sm:gap-4">
           {/* Left panel - Description and hints */}
-          <div className="flex flex-col space-y-4 overflow-y-auto lg:col-span-1">
+          <div className="flex flex-col space-y-3 sm:space-y-4 lg:overflow-y-auto lg:col-span-1">
             {/* Description */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-shrink-0">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 {t('description')}
               </h2>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-xs sm:text-sm">
                 {renderWithCode(localizedExercise.description)}
               </p>
             </div>
 
             {/* Hints */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-shrink-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                   {t('hints')}
                 </h2>
                 <button
                   onClick={() => setShowHints(!showHints)}
-                  className="text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400"
+                  className="text-xs sm:text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400"
                 >
                   {showHints ? t('hideHints') : t('showHints')}
                 </button>
@@ -284,14 +284,14 @@ export default function ExerciseView() {
             </div>
 
             {/* Solution */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-shrink-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                   {t('solution')}
                 </h2>
                 <button
                   onClick={handleShowSolution}
-                  className="text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400"
+                  className="text-xs sm:text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400"
                   disabled={showSolution}
                 >
                   {showSolution ? t('showingSolution') : t('revealSolution')}
@@ -299,7 +299,7 @@ export default function ExerciseView() {
               </div>
               
               {showSolution ? (
-                <div className="h-128">
+                <div className="h-48 sm:h-64 lg:h-128">
                   <CodeEditor
                     value={exercise.solution}
                     onChange={() => {}}
@@ -314,8 +314,8 @@ export default function ExerciseView() {
             </div>
 
             {/* Test code preview */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-1 flex flex-col min-h-0">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-1 flex flex-col min-h-[150px] sm:min-h-[200px] lg:min-h-0">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
                 {t('tests')}
               </h2>
               <div className="flex-1 min-h-0">
@@ -330,16 +330,16 @@ export default function ExerciseView() {
           </div>
 
           {/* Right panel - Editor and output */}
-          <div className="flex flex-col h-full space-y-4 lg:col-span-2">
+          <div className="flex flex-col space-y-3 sm:space-y-4 lg:col-span-2">
             {/* Code editor - takes most of the space */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-[2] flex flex-col min-h-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-[2] flex flex-col min-h-[300px] sm:min-h-[350px] lg:min-h-0">
               <div className="flex items-center justify-between mb-2 flex-shrink-0">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                   {t('yourSolution')}
                 </h2>
                 <button
                   onClick={handleReset}
-                  className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  className="text-xs sm:text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 >
                   {t('resetCode')}
                 </button>
@@ -356,7 +356,7 @@ export default function ExerciseView() {
                 <button
                   onClick={handleRun}
                   disabled={isRunning}
-                  className="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-medium rounded-lg transition-colors"
+                  className="inline-flex items-center px-4 py-2.5 sm:py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-sm sm:text-base font-medium rounded-lg transition-colors"
                 >
                   {isRunning ? (
                     <>
@@ -380,8 +380,8 @@ export default function ExerciseView() {
             </div>
 
             {/* Output - scales with window */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-1 flex flex-col min-h-0">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-1 flex flex-col min-h-[150px] sm:min-h-[200px] lg:min-h-0">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
                 {t('output')}
               </h2>
               <div className="flex-1 min-h-0">

@@ -35,7 +35,11 @@ function getCategoryIcon(category: string): string {
   return icons[category] || '📄';
 }
 
-export default function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void;
+}
+
+export default function Sidebar({ onNavigate }: SidebarProps) {
   const { t, language } = useI18n();
   const { completedExercises } = useApp();
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(categories));
@@ -154,6 +158,7 @@ export default function Sidebar() {
                     <NavLink
                       key={exercise.id}
                       to={`/exercise/${exercise.id}`}
+                      onClick={onNavigate}
                       className={({ isActive }) =>
                         `flex items-center px-3 py-1.5 text-sm rounded-md transition-colors ${
                           isActive

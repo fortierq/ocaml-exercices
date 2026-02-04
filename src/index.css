@@ -57,3 +57,45 @@
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Mobile-specific improvements */
+@media (max-width: 1023px) {
+  /* Prevent horizontal scrolling */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Improve touch targets */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Monaco editor mobile adjustments */
+  .monaco-editor {
+    font-size: 14px !important;
+  }
+  
+  .monaco-editor .lines-content {
+    padding-left: 4px !important;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 640px) {
+  .monaco-editor {
+    font-size: 12px !important;
+  }
+}
+
+/* Ensure sidebar is above everything on mobile */
+@media (max-width: 1023px) {
+  .sidebar-mobile-open {
+    z-index: 50;
+  }
+}
+
+/* Touch-friendly scrolling */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+}
+

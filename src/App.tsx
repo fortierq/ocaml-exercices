@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import { I18nProvider } from './i18n';
 import { AppProvider, useApp } from './context/AppContext';
 import Sidebar from './components/Sidebar';
@@ -45,13 +46,52 @@ function GitHubLink() {
   );
 }
 
+function HamburgerButton({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="lg:hidden p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+      aria-label="Toggle menu"
+    >
+      {isOpen ? (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      ) : (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
 function AppContent() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const closeSidebar = () => setIsSidebarOpen(false);
+
   return (
     <Router basename={basename}>
       <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
-        <Sidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="absolute top-4 right-4 z-10 flex items-center space-x-2">
+        {/* Mobile overlay */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+            onClick={closeSidebar}
+          />
+        )}
+        
+        {/* Sidebar */}
+        <div className={`fixed inset-y-0 left-0 z-40 transform lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}>
+          <Sidebar onNavigate={closeSidebar} />
+        </div>
+        
+        <main className="flex-1 overflow-auto w-full">
+          <div className="fixed top-4 right-4 z-20 flex items-center space-x-2">
+            <HamburgerButton isOpen={isSidebarOpen} onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             <GitHubLink />
             <DarkModeToggle />
             <LanguageSwitcher />
