@@ -1,6 +1,7 @@
 import Editor from '@monaco-editor/react';
 import { useCallback, useRef } from 'react';
 import type { editor } from 'monaco-editor';
+import { useApp } from '../context/AppContext';
 
 interface CodeEditorProps {
   value: string;
@@ -8,6 +9,7 @@ interface CodeEditorProps {
   language?: string;
   height?: string;
   readOnly?: boolean;
+  lineNumbers?: boolean;
 }
 
 // OCaml syntax highlighting configuration
@@ -42,10 +44,12 @@ export default function CodeEditor({
   value,
   onChange,
   language = 'ocaml',
-  height = '400px',
-  readOnly = false
+  height = '100%',
+  readOnly = false,
+  lineNumbers = true
 }: CodeEditorProps) {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const { isDarkMode } = useApp();
 
   const handleEditorDidMount = useCallback((editor: editor.IStandaloneCodeEditor, monaco: typeof import('monaco-editor')) => {
     editorRef.current = editor;
@@ -152,19 +156,19 @@ export default function CodeEditor({
   }, [onChange]);
 
   return (
-    <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 h-full">
       <Editor
         height={height}
         language={language}
         value={value}
         onChange={handleChange}
         onMount={handleEditorDidMount}
-        theme="vs-dark"
+        theme={isDarkMode ? 'vs-dark' : 'light'}
         options={{
           minimap: { enabled: false },
           fontSize: 14,
           fontFamily: "'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace",
-          lineNumbers: 'on',
+          lineNumbers: lineNumbers ? 'on' : 'off',
           scrollBeyondLastLine: false,
           automaticLayout: true,
           tabSize: 2,

@@ -52,6 +52,8 @@ export const translations = {
     syntaxOk: 'Syntax OK (tests not verified)',
     error: 'Error',
     exerciseNotFound: 'Exercise not found',
+    selectExercise: 'Select an exercise from the sidebar',
+    completed: 'completed',
     
     // Footer
     builtWith: 'Built with React, Tailwind CSS, and js_of_ocaml',
@@ -115,6 +117,8 @@ export const translations = {
     syntaxOk: 'Syntaxe OK (tests non vérifiés)',
     error: 'Erreur',
     exerciseNotFound: 'Exercice non trouvé',
+    selectExercise: 'Sélectionnez un exercice dans la barre latérale',
+    completed: 'terminé(s)',
     
     // Footer
     builtWith: 'Construit avec React, Tailwind CSS et js_of_ocaml',

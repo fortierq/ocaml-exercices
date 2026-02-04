@@ -121,8 +121,8 @@ let () =
     id: 'list-length',
     title: 'List Length',
     titleFr: 'Longueur d\'une Liste',
-    description: 'Write a function `length` that returns the number of elements in a list. Do not use the built-in List.length.',
-    descriptionFr: 'Écrivez une fonction `length` qui retourne le nombre d\'éléments dans une liste. N\'utilisez pas List.length.',
+    description: 'Write a function `length` that returns the number of elements in a list. Do not use the built-in `List.length`.',
+    descriptionFr: 'Écrivez une fonction `length` qui retourne le nombre d\'éléments dans une liste. N\'utilisez pas `List.length`.',
     difficulty: 'easy',
     category: 'Lists',
     categoryFr: 'Listes',
@@ -382,8 +382,8 @@ let () =
     id: 'option-bind',
     title: 'Option Bind',
     titleFr: 'Liaison Option',
-    description: 'Write a function `bind` (also known as flatMap or >>=) for the option type that chains optional computations.',
-    descriptionFr: 'Écrivez une fonction `bind` (aussi connue sous le nom de flatMap ou >>=) pour le type option qui chaîne des calculs optionnels.',
+    description: 'Write a function `bind` (also known as flatMap or `>>=`) for the `option` type that chains optional computations.',
+    descriptionFr: 'Écrivez une fonction `bind` (aussi connue sous le nom de flatMap ou `>>=`) pour le type `option` qui chaîne des calculs optionnels.',
     difficulty: 'medium',
     category: 'Options',
     categoryFr: 'Options',
@@ -404,22 +404,22 @@ let () =
   assert (bind (Some 0) (safe_div 100) = None);
   print_endline "All tests passed!"`,
     hints: [
-      'If opt is None, return None',
-      'If opt is Some x, apply f to x',
-      'f returns an option, so no need to wrap the result'
+      'If opt is `None`, return `None`',
+      'If opt is `Some x`, apply `f` to `x`',
+      '`f` returns an `option`, so no need to wrap the result'
     ],
     hintsFr: [
-      'Si opt est None, retournez None',
-      'Si opt est Some x, appliquez f à x',
-      'f retourne une option, donc pas besoin d\'encapsuler le résultat'
+      'Si opt est `None`, retournez `None`',
+      'Si opt est `Some x`, appliquez `f` à `x`',
+      '`f` retourne une `option`, donc pas besoin d\'encapsuler le résultat'
     ]
   },
   {
     id: 'option-map',
     title: 'Option Map',
     titleFr: 'Map sur Option',
-    description: 'Write a function `map` that applies a function to the value inside an option if it exists.',
-    descriptionFr: 'Écrivez une fonction `map` qui applique une fonction à la valeur contenue dans une option si elle existe.',
+    description: 'Write a function `map` that applies a function to the value inside an `option` if it exists.',
+    descriptionFr: 'Écrivez une fonction `map` qui applique une fonction à la valeur contenue dans une `option` si elle existe.',
     difficulty: 'easy',
     category: 'Options',
     categoryFr: 'Options',
@@ -438,22 +438,22 @@ let () =
   assert (map String.length None = None);
   print_endline "All tests passed!"`,
     hints: [
-      'If opt is None, return None',
-      'If opt is Some x, apply f to x and wrap the result',
-      'Unlike bind, map wraps the result in Some'
+      'If opt is `None`, return `None`',
+      'If opt is `Some x`, apply `f` to `x` and wrap the result',
+      'Unlike `bind`, `map` wraps the result in `Some`'
     ],
     hintsFr: [
-      'Si opt est None, retournez None',
-      'Si opt est Some x, appliquez f à x et encapsulez le résultat',
-      'Contrairement à bind, map encapsule le résultat dans Some'
+      'Si opt est `None`, retournez `None`',
+      'Si opt est `Some x`, appliquez `f` à `x` et encapsulez le résultat',
+      'Contrairement à `bind`, `map` encapsule le résultat dans `Some`'
     ]
   },
   {
     id: 'option-sequence',
     title: 'Option Sequence',
     titleFr: 'Séquence d\'Options',
-    description: 'Write a function `sequence` that converts a list of options into an option of list. Returns None if any element is None.',
-    descriptionFr: 'Écrivez une fonction `sequence` qui convertit une liste d\'options en une option de liste. Retourne None si un élément est None.',
+    description: 'Write a function `sequence` that converts a list of options into an option of list. Returns `None` if any element is `None`.',
+    descriptionFr: 'Écrivez une fonction `sequence` qui convertit une liste d\'options en une option de liste. Retourne `None` si un élément est `None`.',
     difficulty: 'medium',
     category: 'Options',
     categoryFr: 'Options',
@@ -476,13 +476,13 @@ let () =
   assert (sequence [None] = None);
   print_endline "All tests passed!"`,
     hints: [
-      'Empty list gives Some []',
-      'If any element is None, return None',
+      'Empty list gives `Some []`',
+      'If any element is `None`, return `None`',
       'Recursively process and combine results'
     ],
     hintsFr: [
-      'Une liste vide donne Some []',
-      'Si un élément est None, retournez None',
+      'Une liste vide donne `Some []`',
+      'Si un élément est `None`, retournez `None`',
       'Traitez récursivement et combinez les résultats'
     ]
   },
@@ -796,224 +796,299 @@ let () =
     id: 'heap-insert',
     title: 'Min-Heap Insert',
     titleFr: 'Insertion Tas-Min',
-    description: 'Implement a min-heap using a leftist heap. Write the `insert` function.',
-    descriptionFr: 'Implémentez un tas-min en utilisant un tas leftist. Écrivez la fonction `insert`.',
+    description: 'Implement a min-heap using an array. Write the `insert` function that adds an element and maintains the heap property.',
+    descriptionFr: 'Implémentez un tas-min en utilisant un tableau. Écrivez la fonction `insert` qui ajoute un élément et maintient la propriété de tas.',
     difficulty: 'hard',
     category: 'Heaps',
     categoryFr: 'Tas',
-    starterCode: `type 'a heap =
-  | Empty
-  | Node of int * 'a * 'a heap * 'a heap
+    starterCode: `(* Array-based min-heap *)
+type 'a heap = { mutable data: 'a array; mutable size: int }
 
-let rank = function Empty -> 0 | Node (r, _, _, _) -> r
+let create () = { data = [||]; size = 0 }
 
-let make_node x left right =
-  if rank left >= rank right
-  then Node (rank right + 1, x, left, right)
-  else Node (rank left + 1, x, right, left)
+let parent i = (i - 1) / 2
+let left i = 2 * i + 1
+let right i = 2 * i + 2
 
-(* Merge two heaps *)
-let rec merge h1 h2 =
+let swap arr i j =
+  let tmp = arr.(i) in
+  arr.(i) <- arr.(j);
+  arr.(j) <- tmp
+
+(* Bubble up element at index i *)
+let rec sift_up heap i =
   failwith "TODO"
 
-(* Insert into heap *)
-let insert x h =
+(* Insert element into heap *)
+let insert heap x =
   failwith "TODO"`,
-    solution: `type 'a heap =
-  | Empty
-  | Node of int * 'a * 'a heap * 'a heap
+    solution: `(* Array-based min-heap *)
+type 'a heap = { mutable data: 'a array; mutable size: int }
 
-let rank = function Empty -> 0 | Node (r, _, _, _) -> r
+let create () = { data = [||]; size = 0 }
 
-let make_node x left right =
-  if rank left >= rank right
-  then Node (rank right + 1, x, left, right)
-  else Node (rank left + 1, x, right, left)
+let parent i = (i - 1) / 2
+let left i = 2 * i + 1
+let right i = 2 * i + 2
 
-let rec merge h1 h2 =
-  match h1, h2 with
-  | Empty, h | h, Empty -> h
-  | Node (_, x1, l1, r1), Node (_, x2, _, _) when x1 <= x2 ->
-    make_node x1 l1 (merge r1 h2)
-  | Node (_, _, _, _), Node (_, x2, l2, r2) ->
-    make_node x2 l2 (merge h1 r2)
+let swap arr i j =
+  let tmp = arr.(i) in
+  arr.(i) <- arr.(j);
+  arr.(j) <- tmp
 
-let insert x h = merge (Node (1, x, Empty, Empty)) h`,
+let rec sift_up heap i =
+  if i > 0 && heap.data.(parent i) > heap.data.(i) then begin
+    swap heap.data (parent i) i;
+    sift_up heap (parent i)
+  end
+
+let insert heap x =
+  let new_size = heap.size + 1 in
+  if new_size > Array.length heap.data then begin
+    let new_cap = max 1 (2 * Array.length heap.data) in
+    let new_arr = Array.make new_cap x in
+    Array.blit heap.data 0 new_arr 0 heap.size;
+    heap.data <- new_arr
+  end;
+  heap.data.(heap.size) <- x;
+  heap.size <- new_size;
+  sift_up heap (heap.size - 1)`,
     tests: `(* Tests *)
-let get_min = function
-  | Empty -> failwith "Empty heap"
-  | Node (_, x, _, _) -> x
+let get_min heap =
+  if heap.size = 0 then failwith "Empty heap"
+  else heap.data.(0)
 
 let () =
-  let h = Empty in
-  let h = insert 5 h in
+  let h = create () in
+  insert h 5;
   assert (get_min h = 5);
-  let h = insert 3 h in
+  insert h 3;
   assert (get_min h = 3);
-  let h = insert 7 h in
+  insert h 7;
   assert (get_min h = 3);
-  let h = insert 1 h in
+  insert h 1;
   assert (get_min h = 1);
   print_endline "All tests passed!"`,
     hints: [
-      'A leftist heap maintains the leftist property via rank',
-      'Merge is the key operation; insert creates a singleton and merges',
-      'Always merge with the right spine to maintain efficiency'
+      'Use `sift_up` to restore heap property after insertion',
+      'Compare with parent and swap if smaller',
+      'Remember to resize the array when full'
     ],
     hintsFr: [
-      'Un tas leftist maintient la propriété leftist via le rang',
-      'La fusion est l\'opération clé ; l\'insertion crée un singleton et fusionne',
-      'Fusionnez toujours avec l\'épine droite pour maintenir l\'efficacité'
+      'Utilisez `sift_up` pour restaurer la propriété de tas après insertion',
+      'Comparez avec le parent et échangez si plus petit',
+      'N\'oubliez pas de redimensionner le tableau quand il est plein'
     ]
   },
   {
     id: 'heap-extract-min',
     title: 'Min-Heap Extract',
     titleFr: 'Extraction Tas-Min',
-    description: 'Write a function `extract_min` that removes and returns the minimum element from a leftist heap.',
-    descriptionFr: 'Écrivez une fonction `extract_min` qui supprime et retourne l\'élément minimum d\'un tas leftist.',
+    description: 'Write a function `extract_min` that removes and returns the minimum element from an array-based min-heap.',
+    descriptionFr: 'Écrivez une fonction `extract_min` qui supprime et retourne l\'élément minimum d\'un tas-min basé sur tableau.',
     difficulty: 'medium',
     category: 'Heaps',
     categoryFr: 'Tas',
-    starterCode: `type 'a heap =
-  | Empty
-  | Node of int * 'a * 'a heap * 'a heap
+    starterCode: `(* Array-based min-heap *)
+type 'a heap = { mutable data: 'a array; mutable size: int }
 
-let rank = function Empty -> 0 | Node (r, _, _, _) -> r
+let parent i = (i - 1) / 2
+let left i = 2 * i + 1
+let right i = 2 * i + 2
 
-let make_node x left right =
-  if rank left >= rank right
-  then Node (rank right + 1, x, left, right)
-  else Node (rank left + 1, x, right, left)
+let swap arr i j =
+  let tmp = arr.(i) in
+  arr.(i) <- arr.(j);
+  arr.(j) <- tmp
 
-let rec merge h1 h2 =
-  match h1, h2 with
-  | Empty, h | h, Empty -> h
-  | Node (_, x1, l1, r1), Node (_, x2, _, _) when x1 <= x2 ->
-    make_node x1 l1 (merge r1 h2)
-  | _, Node (_, x2, l2, r2) ->
-    make_node x2 l2 (merge h1 r2)
+(* Bubble down element at index i *)
+let rec sift_down heap i =
+  failwith "TODO"
 
-(* Extract minimum: returns (min_value, new_heap) *)
-let extract_min h =
+(* Extract minimum: returns min_value *)
+let extract_min heap =
   failwith "TODO"`,
-    solution: `type 'a heap =
-  | Empty
-  | Node of int * 'a * 'a heap * 'a heap
+    solution: `(* Array-based min-heap *)
+type 'a heap = { mutable data: 'a array; mutable size: int }
 
-let rank = function Empty -> 0 | Node (r, _, _, _) -> r
+let parent i = (i - 1) / 2
+let left i = 2 * i + 1
+let right i = 2 * i + 2
 
-let make_node x left right =
-  if rank left >= rank right
-  then Node (rank right + 1, x, left, right)
-  else Node (rank left + 1, x, right, left)
+let swap arr i j =
+  let tmp = arr.(i) in
+  arr.(i) <- arr.(j);
+  arr.(j) <- tmp
 
-let rec merge h1 h2 =
-  match h1, h2 with
-  | Empty, h | h, Empty -> h
-  | Node (_, x1, l1, r1), Node (_, x2, _, _) when x1 <= x2 ->
-    make_node x1 l1 (merge r1 h2)
-  | _, Node (_, x2, l2, r2) ->
-    make_node x2 l2 (merge h1 r2)
+let rec sift_down heap i =
+  let smallest = ref i in
+  let l = left i and r = right i in
+  if l < heap.size && heap.data.(l) < heap.data.(!smallest) then
+    smallest := l;
+  if r < heap.size && heap.data.(r) < heap.data.(!smallest) then
+    smallest := r;
+  if !smallest <> i then begin
+    swap heap.data i !smallest;
+    sift_down heap !smallest
+  end
 
-let extract_min = function
-  | Empty -> failwith "Empty heap"
-  | Node (_, x, left, right) -> (x, merge left right)`,
+let extract_min heap =
+  if heap.size = 0 then failwith "Empty heap";
+  let min_val = heap.data.(0) in
+  heap.data.(0) <- heap.data.(heap.size - 1);
+  heap.size <- heap.size - 1;
+  sift_down heap 0;
+  min_val`,
     tests: `(* Tests *)
-let insert x h = merge (Node (1, x, Empty, Empty)) h
+let create () = { data = [||]; size = 0 }
+
+let rec sift_up heap i =
+  if i > 0 && heap.data.(parent i) > heap.data.(i) then begin
+    swap heap.data (parent i) i;
+    sift_up heap (parent i)
+  end
+
+let insert heap x =
+  let new_size = heap.size + 1 in
+  if new_size > Array.length heap.data then begin
+    let new_cap = max 1 (2 * Array.length heap.data) in
+    let new_arr = Array.make new_cap x in
+    Array.blit heap.data 0 new_arr 0 heap.size;
+    heap.data <- new_arr
+  end;
+  heap.data.(heap.size) <- x;
+  heap.size <- new_size;
+  sift_up heap (heap.size - 1)
 
 let () =
-  let h = insert 3 (insert 1 (insert 4 (insert 1 (insert 5 Empty)))) in
-  let (m, h) = extract_min h in
-  assert (m = 1);
-  let (m, h) = extract_min h in
-  assert (m = 1);
-  let (m, h) = extract_min h in
-  assert (m = 3);
-  let (m, _) = extract_min h in
-  assert (m = 4);
+  let h = create () in
+  List.iter (insert h) [3; 1; 4; 1; 5];
+  assert (extract_min h = 1);
+  assert (extract_min h = 1);
+  assert (extract_min h = 3);
+  assert (extract_min h = 4);
   print_endline "All tests passed!"`,
     hints: [
-      'The minimum is always at the root',
-      'After removing the root, merge the two subtrees',
-      'Handle the empty heap case'
+      'The minimum is always at index 0',
+      'Replace root with last element, then `sift_down`',
+      'Compare with both children and swap with the smaller one'
     ],
     hintsFr: [
-      'Le minimum est toujours à la racine',
-      'Après avoir supprimé la racine, fusionnez les deux sous-arbres',
-      'Gérez le cas du tas vide'
+      'Le minimum est toujours à l\'index 0',
+      'Remplacez la racine par le dernier élément, puis `sift_down`',
+      'Comparez avec les deux enfants et échangez avec le plus petit'
     ]
   },
   {
     id: 'heapsort',
     title: 'Heapsort',
     titleFr: 'Tri par Tas',
-    description: 'Implement heapsort using a leftist heap: build a heap from the list, then extract elements in order.',
-    descriptionFr: 'Implémentez le tri par tas avec un tas leftist : construisez un tas à partir de la liste, puis extrayez les éléments dans l\'ordre.',
+    description: 'Implement heapsort using an array-based min-heap: build a heap from the list, then extract elements in order.',
+    descriptionFr: 'Implémentez le tri par tas avec un tas-min basé sur tableau : construisez un tas à partir de la liste, puis extrayez les éléments dans l\'ordre.',
     difficulty: 'medium',
     category: 'Heaps',
     categoryFr: 'Tas',
-    starterCode: `type 'a heap =
-  | Empty
-  | Node of int * 'a * 'a heap * 'a heap
+    starterCode: `(* Array-based min-heap *)
+type 'a heap = { mutable data: 'a array; mutable size: int }
 
-let rank = function Empty -> 0 | Node (r, _, _, _) -> r
+let create () = { data = [||]; size = 0 }
+let parent i = (i - 1) / 2
+let left i = 2 * i + 1
+let right i = 2 * i + 2
 
-let make_node x left right =
-  if rank left >= rank right
-  then Node (rank right + 1, x, left, right)
-  else Node (rank left + 1, x, right, left)
+let swap arr i j =
+  let tmp = arr.(i) in arr.(i) <- arr.(j); arr.(j) <- tmp
 
-let rec merge h1 h2 =
-  match h1, h2 with
-  | Empty, h | h, Empty -> h
-  | Node (_, x1, l1, r1), Node (_, x2, _, _) when x1 <= x2 ->
-    make_node x1 l1 (merge r1 h2)
-  | _, Node (_, x2, l2, r2) ->
-    make_node x2 l2 (merge h1 r2)
+let rec sift_up heap i =
+  if i > 0 && heap.data.(parent i) > heap.data.(i) then begin
+    swap heap.data (parent i) i; sift_up heap (parent i)
+  end
 
-let insert x h = merge (Node (1, x, Empty, Empty)) h
+let insert heap x =
+  let new_size = heap.size + 1 in
+  if new_size > Array.length heap.data then begin
+    let new_cap = max 1 (2 * Array.length heap.data) in
+    let new_arr = Array.make new_cap x in
+    Array.blit heap.data 0 new_arr 0 heap.size;
+    heap.data <- new_arr
+  end;
+  heap.data.(heap.size) <- x;
+  heap.size <- new_size;
+  sift_up heap (heap.size - 1)
 
-let extract_min = function
-  | Empty -> failwith "Empty"
-  | Node (_, x, l, r) -> (x, merge l r)
+let rec sift_down heap i =
+  let smallest = ref i in
+  let l = left i and r = right i in
+  if l < heap.size && heap.data.(l) < heap.data.(!smallest) then smallest := l;
+  if r < heap.size && heap.data.(r) < heap.data.(!smallest) then smallest := r;
+  if !smallest <> i then begin
+    swap heap.data i !smallest; sift_down heap !smallest
+  end
+
+let extract_min heap =
+  if heap.size = 0 then failwith "Empty heap";
+  let min_val = heap.data.(0) in
+  heap.data.(0) <- heap.data.(heap.size - 1);
+  heap.size <- heap.size - 1;
+  sift_down heap 0;
+  min_val
 
 (* Sort a list using the heap *)
 let heapsort lst =
   failwith "TODO"`,
-    solution: `type 'a heap =
-  | Empty
-  | Node of int * 'a * 'a heap * 'a heap
+    solution: `(* Array-based min-heap *)
+type 'a heap = { mutable data: 'a array; mutable size: int }
 
-let rank = function Empty -> 0 | Node (r, _, _, _) -> r
+let create () = { data = [||]; size = 0 }
+let parent i = (i - 1) / 2
+let left i = 2 * i + 1
+let right i = 2 * i + 2
 
-let make_node x left right =
-  if rank left >= rank right
-  then Node (rank right + 1, x, left, right)
-  else Node (rank left + 1, x, right, left)
+let swap arr i j =
+  let tmp = arr.(i) in arr.(i) <- arr.(j); arr.(j) <- tmp
 
-let rec merge h1 h2 =
-  match h1, h2 with
-  | Empty, h | h, Empty -> h
-  | Node (_, x1, l1, r1), Node (_, x2, _, _) when x1 <= x2 ->
-    make_node x1 l1 (merge r1 h2)
-  | _, Node (_, x2, l2, r2) ->
-    make_node x2 l2 (merge h1 r2)
+let rec sift_up heap i =
+  if i > 0 && heap.data.(parent i) > heap.data.(i) then begin
+    swap heap.data (parent i) i; sift_up heap (parent i)
+  end
 
-let insert x h = merge (Node (1, x, Empty, Empty)) h
+let insert heap x =
+  let new_size = heap.size + 1 in
+  if new_size > Array.length heap.data then begin
+    let new_cap = max 1 (2 * Array.length heap.data) in
+    let new_arr = Array.make new_cap x in
+    Array.blit heap.data 0 new_arr 0 heap.size;
+    heap.data <- new_arr
+  end;
+  heap.data.(heap.size) <- x;
+  heap.size <- new_size;
+  sift_up heap (heap.size - 1)
 
-let extract_min = function
-  | Empty -> failwith "Empty"
-  | Node (_, x, l, r) -> (x, merge l r)
+let rec sift_down heap i =
+  let smallest = ref i in
+  let l = left i and r = right i in
+  if l < heap.size && heap.data.(l) < heap.data.(!smallest) then smallest := l;
+  if r < heap.size && heap.data.(r) < heap.data.(!smallest) then smallest := r;
+  if !smallest <> i then begin
+    swap heap.data i !smallest; sift_down heap !smallest
+  end
+
+let extract_min heap =
+  if heap.size = 0 then failwith "Empty heap";
+  let min_val = heap.data.(0) in
+  heap.data.(0) <- heap.data.(heap.size - 1);
+  heap.size <- heap.size - 1;
+  sift_down heap 0;
+  min_val
 
 let heapsort lst =
-  let heap = List.fold_left (fun h x -> insert x h) Empty lst in
-  let rec extract_all h acc =
-    match h with
-    | Empty -> List.rev acc
-    | _ -> let (m, h') = extract_min h in extract_all h' (m :: acc)
+  let heap = create () in
+  List.iter (insert heap) lst;
+  let rec extract_all acc =
+    if heap.size = 0 then List.rev acc
+    else extract_all (extract_min heap :: acc)
   in
-  extract_all heap []`,
+  extract_all []`,
     tests: `(* Tests *)
 let () =
   assert (heapsort [] = []);
@@ -1024,12 +1099,12 @@ let () =
     hints: [
       'First, insert all elements into an empty heap',
       'Then, repeatedly extract the minimum',
-      'Use List.fold_left to build the heap'
+      'Use `List.iter` to insert all elements'
     ],
     hintsFr: [
       'D\'abord, insérez tous les éléments dans un tas vide',
       'Ensuite, extrayez le minimum de manière répétée',
-      'Utilisez List.fold_left pour construire le tas'
+      'Utilisez `List.iter` pour insérer tous les éléments'
     ]
   },
   // Hash Tables
@@ -1164,13 +1239,13 @@ let () =
   assert (find tbl 1 = Some "one");
   print_endline "All tests passed!"`,
     hints: [
-      'Use List.assoc_opt to find in the bucket',
-      'Use List.filter to remove from the bucket',
+      'Use `List.assoc_opt` to find in the bucket',
+      'Use `List.filter` to remove from the bucket',
       'Remember to compute the correct bucket index first'
     ],
     hintsFr: [
-      'Utilisez List.assoc_opt pour chercher dans le bucket',
-      'Utilisez List.filter pour supprimer du bucket',
+      'Utilisez `List.assoc_opt` pour chercher dans le bucket',
+      'Utilisez `List.filter` pour supprimer du bucket',
       'N\'oubliez pas de calculer d\'abord le bon indice de bucket'
     ]
   },

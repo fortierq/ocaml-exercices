@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import CodeEditor from './CodeEditor';
-import LanguageSwitcher from './LanguageSwitcher';
 import { getExerciseById, type Exercise } from '../data/exercises';
 import { executeWithTests, type ExecutionResult } from '../lib/ocaml-toplevel';
 import { useI18n, useLocalizedExercise } from '../i18n';
+import { useApp } from '../context/AppContext';
 
 interface OutputPanelProps {
   result: ExecutionResult | null;
@@ -13,11 +13,12 @@ interface OutputPanelProps {
 
 function OutputPanel({ result, isRunning }: OutputPanelProps) {
   const { t } = useI18n();
+  const { isDarkMode } = useApp();
 
   if (isRunning) {
     return (
-      <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm h-48 flex items-center justify-center">
-        <div className="flex items-center space-x-2 text-gray-400">
+      <div className={`rounded-lg p-4 font-mono text-sm h-full flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+        <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -30,14 +31,16 @@ function OutputPanel({ result, isRunning }: OutputPanelProps) {
 
   if (!result) {
     return (
-      <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm h-48 flex items-center justify-center text-gray-500">
+      <div className={`rounded-lg p-4 font-mono text-sm h-full flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-gray-500' : 'bg-gray-100 text-gray-500'}`}>
         {t('clickRunTests')}
       </div>
     );
   }
 
   return (
-    <div className={`bg-gray-900 rounded-lg p-4 font-mono text-sm h-48 overflow-auto ${
+    <div className={`rounded-lg p-4 font-mono text-sm h-full overflow-auto ${
+      isDarkMode ? 'bg-gray-900' : 'bg-gray-100'
+    } ${
       result.success ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500'
     }`}>
       <div className="flex items-center space-x-2 mb-2">
@@ -57,12 +60,31 @@ function OutputPanel({ result, isRunning }: OutputPanelProps) {
           </>
         )}
       </div>
-      <pre className="text-gray-300 whitespace-pre-wrap">{result.output}</pre>
+      <pre className={`whitespace-pre-wrap ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{result.output}</pre>
       {result.error && (
         <pre className="text-red-400 mt-2 whitespace-pre-wrap">{result.error}</pre>
       )}
     </div>
   );
+}
+
+// Helper to render text with inline code formatting
+function renderWithCode(text: string) {
+  const parts = text.split(/(`[^`]+`)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('`') && part.endsWith('`')) {
+      const code = part.slice(1, -1);
+      return (
+        <code
+          key={index}
+          className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-orange-600 dark:text-orange-400 font-mono text-xs"
+        >
+          {code}
+        </code>
+      );
+    }
+    return part;
+  });
 }
 
 function DifficultyBadge({ difficulty }: { difficulty: Exercise['difficulty'] }) {
@@ -123,6 +145,8 @@ export default function ExerciseView() {
     }
   }, [id, code]);
 
+  const { markCompleted } = useApp();
+
   const handleRun = useCallback(async () => {
     if (!exercise) return;
     
@@ -132,6 +156,11 @@ export default function ExerciseView() {
     try {
       const execResult = await executeWithTests(code, exercise.tests);
       setResult(execResult);
+      
+      // Mark exercise as completed if all tests pass
+      if (execResult.success && id) {
+        markCompleted(id);
+      }
     } catch (error) {
       setResult({
         success: false,
@@ -141,7 +170,7 @@ export default function ExerciseView() {
     } finally {
       setIsRunning(false);
     }
-  }, [code, exercise]);
+  }, [code, exercise, id, markCompleted]);
 
   const handleReset = useCallback(() => {
     if (exercise) {
@@ -170,69 +199,54 @@ export default function ExerciseView() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             {t('exerciseNotFound')}
           </h2>
-          <Link
-            to="/"
-            className="text-orange-600 hover:text-orange-700 dark:text-orange-400"
-          >
-            ← {t('backToExercises')}
-          </Link>
+          <p className="text-gray-500 dark:text-gray-400">
+            {t('selectExercise') || 'Select an exercise from the sidebar'}
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-white dark:bg-gray-800 shadow-sm flex-shrink-0">
+        <div className="px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                title={t('backToExercises')}
-              >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-              </Link>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {localizedExercise.title}
-                </h1>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {localizedExercise.category}
-                  </span>
-                  <span className="text-gray-300 dark:text-gray-600">•</span>
-                  <DifficultyBadge difficulty={exercise.difficulty} />
-                </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                {localizedExercise.title}
+              </h1>
+              <div className="flex items-center space-x-2 mt-1">
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {localizedExercise.category}
+                </span>
+                <span className="text-gray-300 dark:text-gray-600">•</span>
+                <DifficultyBadge difficulty={exercise.difficulty} />
               </div>
             </div>
-            <LanguageSwitcher />
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Main content - fills remaining height */}
+      <main className="flex-1 overflow-hidden p-4">
+        <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Left panel - Description and hints */}
-          <div className="space-y-6">
+          <div className="flex flex-col space-y-4 overflow-y-auto lg:col-span-1">
             {/* Description */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-shrink-0">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 {t('description')}
               </h2>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {localizedExercise.description}
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
+                {renderWithCode(localizedExercise.description)}
               </p>
             </div>
 
             {/* Hints */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-shrink-0">
+              <div className="flex items-center justify-between mb-2">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {t('hints')}
                 </h2>
@@ -245,14 +259,14 @@ export default function ExerciseView() {
               </div>
               
               {showHints && (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {localizedExercise.hints.slice(0, currentHint + 1).map((hint, index) => (
                     <div
                       key={index}
-                      className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"
+                      className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"
                     >
                       <p className="text-sm text-orange-800 dark:text-orange-200">
-                        <span className="font-semibold">{t('hint')} {index + 1}:</span> {hint}
+                        <span className="font-semibold">{t('hint')} {index + 1}:</span> {renderWithCode(hint)}
                       </p>
                     </div>
                   ))}
@@ -270,8 +284,8 @@ export default function ExerciseView() {
             </div>
 
             {/* Solution */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-shrink-0">
+              <div className="flex items-center justify-between mb-2">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {t('solution')}
                 </h2>
@@ -285,11 +299,10 @@ export default function ExerciseView() {
               </div>
               
               {showSolution ? (
-                <div className="rounded-lg overflow-hidden">
+                <div className="h-128">
                   <CodeEditor
                     value={exercise.solution}
                     onChange={() => {}}
-                    height="200px"
                     readOnly
                   />
                 </div>
@@ -299,13 +312,28 @@ export default function ExerciseView() {
                 </p>
               )}
             </div>
+
+            {/* Test code preview */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-1 flex flex-col min-h-0">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
+                {t('tests')}
+              </h2>
+              <div className="flex-1 min-h-0">
+                <CodeEditor
+                  value={exercise.tests}
+                  onChange={() => {}}
+                  readOnly
+                  lineNumbers={false}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Right panel - Editor and output */}
-          <div className="space-y-6">
-            {/* Code editor */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col h-full space-y-4 lg:col-span-2">
+            {/* Code editor - takes most of the space */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-[2] flex flex-col min-h-0">
+              <div className="flex items-center justify-between mb-2 flex-shrink-0">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {t('yourSolution')}
                 </h2>
@@ -317,13 +345,14 @@ export default function ExerciseView() {
                 </button>
               </div>
               
-              <CodeEditor
-                value={code}
-                onChange={setCode}
-                height="350px"
-              />
+              <div className="flex-1 min-h-0">
+                <CodeEditor
+                  value={code}
+                  onChange={setCode}
+                />
+              </div>
               
-              <div className="mt-4 flex justify-end items-center">
+              <div className="mt-3 flex justify-end items-center flex-shrink-0">
                 <button
                   onClick={handleRun}
                   disabled={isRunning}
@@ -350,26 +379,13 @@ export default function ExerciseView() {
               </div>
             </div>
 
-            {/* Output */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            {/* Output - scales with window */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 flex-1 flex flex-col min-h-0">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
                 {t('output')}
               </h2>
-              <OutputPanel result={result} isRunning={isRunning} />
-            </div>
-
-            {/* Test code preview */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t('tests')}
-              </h2>
-              <div className="rounded-lg overflow-hidden">
-                <CodeEditor
-                  value={exercise.tests}
-                  onChange={() => {}}
-                  height="150px"
-                  readOnly
-                />
+              <div className="flex-1 min-h-0">
+                <OutputPanel result={result} isRunning={isRunning} />
               </div>
             </div>
           </div>
