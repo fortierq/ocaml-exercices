@@ -314,11 +314,11 @@ export default function ExerciseView() {
             </div>
 
             {/* Test code preview */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-1 flex flex-col min-h-[150px] sm:min-h-[200px] lg:min-h-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 lg:flex-1 lg:flex lg:flex-col lg:min-h-0">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
                 {t('tests')}
               </h2>
-              <div className="flex-1 min-h-0">
+              <div className="h-[150px] sm:h-[180px] lg:flex-1 lg:min-h-0">
                 <CodeEditor
                   value={exercise.tests}
                   onChange={() => {}}
@@ -330,9 +330,9 @@ export default function ExerciseView() {
           </div>
 
           {/* Right panel - Editor and output */}
-          <div className="flex flex-col space-y-3 sm:space-y-4 lg:col-span-2">
+          <div className="flex flex-col space-y-3 sm:space-y-4 lg:col-span-2 lg:h-full">
             {/* Code editor - takes most of the space */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-[2] flex flex-col min-h-[300px] sm:min-h-[350px] lg:min-h-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 lg:flex-[2] lg:flex lg:flex-col lg:min-h-0">
               <div className="flex items-center justify-between mb-2 flex-shrink-0">
                 <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                   {t('yourSolution')}
@@ -345,7 +345,7 @@ export default function ExerciseView() {
                 </button>
               </div>
               
-              <div className="flex-1 min-h-0">
+              <div className="h-[250px] sm:h-[300px] lg:flex-1 lg:min-h-0">
                 <CodeEditor
                   value={code}
                   onChange={setCode}
@@ -380,11 +380,11 @@ export default function ExerciseView() {
             </div>
 
             {/* Output - scales with window */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-1 flex flex-col min-h-[150px] sm:min-h-[200px] lg:min-h-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 lg:flex-1 lg:flex lg:flex-col lg:min-h-0">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
                 {t('output')}
               </h2>
-              <div className="flex-1 min-h-0">
+              <div className="h-[120px] sm:h-[150px] lg:flex-1 lg:min-h-0">
                 <OutputPanel result={result} isRunning={isRunning} />
               </div>
             </div>
