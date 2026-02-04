@@ -1,0 +1,31 @@
+{
+  "name": "OCaml Exercises Development",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ocamllabs.ocaml-platform",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "ocaml.sandbox": {
+          "kind": "opam",
+          "switch": "default"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "npm install && npm run build:ocaml",
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "remoteUser": "opam"
+}

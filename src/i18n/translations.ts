@@ -50,7 +50,6 @@ export const translations = {
     runningOCaml: 'Running OCaml code...',
     success: 'Success!',
     syntaxOk: 'Syntax OK (tests not verified)',
-    testOnTryOCaml: 'Test on try.ocaml.pro',
     error: 'Error',
     exerciseNotFound: 'Exercise not found',
     
@@ -114,7 +113,6 @@ export const translations = {
     runningOCaml: 'Exécution du code OCaml...',
     success: 'Succès !',
     syntaxOk: 'Syntaxe OK (tests non vérifiés)',
-    testOnTryOCaml: 'Tester sur try.ocaml.pro',
     error: 'Erreur',
     exerciseNotFound: 'Exercice non trouvé',
     

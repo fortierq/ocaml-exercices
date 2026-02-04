@@ -1,0 +1,77 @@
+# Dockerfile for building OCaml toplevel with js_of_ocaml
+FROM ocaml/opam:ubuntu-24.04-ocaml-5.2
+
+USER opam
+WORKDIR /home/opam
+
+# Update opam and install js_of_ocaml packages
+RUN opam update && \
+    opam install -y js_of_ocaml js_of_ocaml-toplevel js_of_ocaml-compiler
+
+# Create the toplevel wrapper
+RUN cat > /home/opam/toplevel_main.ml << 'OCAML_EOF'
+(* OCaml Toplevel for browser *)
+open Js_of_ocaml
+
+let () =
+  Js_of_ocaml_toplevel.JsooTop.initialize ();
+  (* Expose execute function to JavaScript *)
+  Js.Unsafe.global##.caml_execute := Js.wrap_callback (fun code_js ->
+    let code = Js.to_string code_js in
+    let buffer = Buffer.create 1024 in
+    let ppf = Format.formatter_of_buffer buffer in
+    let () = 
+      try
+        let lexbuf = Lexing.from_string (code ^ ";;") in
+        while true do
+          try
+            let phrase = !Toploop.parse_toplevel_phrase lexbuf in
+            ignore (Toploop.execute_phrase true ppf phrase)
+          with
+          | End_of_file -> raise End_of_file
+          | e -> 
+            Format.fprintf ppf "Error: %s@." (Printexc.to_string e);
+            raise End_of_file
+        done
+      with End_of_file -> ()
+    in
+    Format.pp_print_flush ppf ();
+    Js.string (Buffer.contents buffer)
+  );
+  (* Signal ready *)
+  Js.Unsafe.global##.ocamlToplevelReady := Js._true;
+  Firebug.console##log (Js.string "✅ OCaml toplevel ready!")
+OCAML_EOF
+
+# Compile the toplevel
+RUN eval $(opam env) && \
+    ocamlfind ocamlc \
+      -package js_of_ocaml,js_of_ocaml-toplevel,js_of_ocaml-ppx \
+      -linkpkg \
+      /home/opam/toplevel_main.ml \
+      -o /home/opam/toplevel.byte
+
+# Convert to JavaScript with js_of_ocaml
+RUN eval $(opam env) && \
+    js_of_ocaml \
+      --toplevel \
+      +toplevel.js \
+      +dynlink.js \
+      /home/opam/toplevel.byte \
+      -o /home/opam/toplevel.js
+
+# Create output directory and copy files
+RUN mkdir -p /home/opam/output && \
+    cp /home/opam/toplevel.js /home/opam/output/
+
+# Copy stdlib .cmi files
+RUN eval $(opam env) && \
+    STDLIB=$(ocamlfind printconf stdlib) && \
+    mkdir -p /home/opam/output/stdlib && \
+    cp $STDLIB/*.cmi /home/opam/output/stdlib/ 2>/dev/null || true
+
+# Show file sizes
+RUN ls -lh /home/opam/output/toplevel.js && \
+    du -sh /home/opam/output/stdlib
+
+CMD ["echo", "Build complete. Use 'docker cp' to extract files from /home/opam/output/"]

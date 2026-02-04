@@ -1,0 +1,2 @@
+# This directory will contain the compiled OCaml toplevel
+# Run: npm run build:ocaml to generate the files

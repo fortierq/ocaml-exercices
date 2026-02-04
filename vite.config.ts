@@ -3,7 +3,10 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss()],
-  base: '/ocaml-exercices/',
-})
+  base: command === 'build' ? '/ocaml-exercices/' : '/',
+  server: {
+    host: true,
+  },
+}))

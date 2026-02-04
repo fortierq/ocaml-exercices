@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:ocaml": "chmod +x scripts/build-ocaml-toplevel.sh && ./scripts/build-ocaml-toplevel.sh",
     "lint": "eslint .",
     "preview": "vite preview"
   },
