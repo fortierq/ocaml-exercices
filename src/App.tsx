@@ -1,12 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import { I18nProvider } from './i18n';
 import { AppProvider, useApp } from './context/AppContext';
 import Sidebar from './components/Sidebar';
 import ExerciseView from './components/ExerciseView';
 import LanguageSwitcher from './components/LanguageSwitcher';
-
-const basename = import.meta.env.BASE_URL;
 
 function DarkModeToggle() {
   const { isDarkMode, toggleDarkMode } = useApp();
@@ -72,7 +70,7 @@ function AppContent() {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
-    <Router basename={basename}>
+    <Router>
       <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
         {/* Mobile overlay */}
         {isSidebarOpen && (
