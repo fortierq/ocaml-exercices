@@ -1,1 +1,1 @@
-# 🐫 OCaml Exercises
+# OCaml Exercises

@@ -65,15 +65,7 @@ function HamburgerButton({ isOpen, onClick }: { isOpen: boolean; onClick: () => 
       className="lg:hidden p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
       aria-label="Toggle menu"
     >
-      {isOpen ? (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      ) : (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      )}
+      <span className="text-sm font-medium">{isOpen ? 'Close' : 'Menu'}</span>
     </button>
   );
 }
@@ -95,9 +87,9 @@ function AppContent() {
         )}
         
         {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-40 transform lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out ${
+        <div className={`fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}>
+        } lg:relative lg:translate-x-0`}>
           <Sidebar onNavigate={closeSidebar} />
         </div>
         

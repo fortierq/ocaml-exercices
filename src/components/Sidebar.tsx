@@ -16,25 +16,6 @@ function DifficultyDot({ difficulty }: { difficulty: Exercise['difficulty'] }) {
   );
 }
 
-// Helper to get category icon
-function getCategoryIcon(category: string): string {
-  const icons: Record<string, string> = {
-    'Basics': '📝',
-    'Recursion': '🔄',
-    'Lists': '📋',
-    'Higher-Order Functions': '⚡',
-    'Trees': '🌳',
-    'Options': '❓',
-    'Sorting': '📊',
-    'Interpreters': '🔧',
-    'Binary Search Trees': '🌲',
-    'Heaps': '📚',
-    'Hash Tables': '🗂️',
-    'Graphs': '🕸️',
-  };
-  return icons[category] || '📄';
-}
-
 interface SidebarProps {
   onNavigate?: () => void;
 }
@@ -93,7 +74,6 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       {/* Header */}
       <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <NavLink to="/" className="flex items-center space-x-2">
-          <span className="text-2xl">🐫</span>
           <span className="font-bold text-lg">{t('siteName')}</span>
         </NavLink>
       </div>
@@ -101,14 +81,9 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       {/* Search */}
       <div className={`p-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
           <input
             type="text"
-            className={`block w-full pl-9 pr-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 ${isDarkMode ? 'border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500' : 'border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400'}`}
+            className={`block w-full pl-3 pr-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500 ${isDarkMode ? 'border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-500' : 'border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400'}`}
             placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -132,22 +107,12 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                 onClick={() => toggleCategory(category)}
                 className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md transition-colors ${isDarkMode ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100'}`}
               >
-                <span className="flex items-center">
-                  <span className="mr-2">{getCategoryIcon(category)}</span>
-                  <span>{getLocalizedCategory(category)}</span>
-                </span>
+                <span>{getLocalizedCategory(category)}</span>
                 <span className="flex items-center space-x-2">
                   <span className="text-xs text-gray-500">
                     {completedCount}/{categoryExercises.length}
                   </span>
-                  <svg
-                    className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <span className="text-xs text-gray-500">{isExpanded ? '-' : '+'}</span>
                 </span>
               </button>
 
@@ -170,11 +135,6 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                       }
                     >
                       <span className="flex-1 truncate flex items-center">
-                        {isCompleted(exercise.id) && (
-                          <svg className="h-3.5 w-3.5 text-green-500 mr-1.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                        )}
                         <span className="truncate">{getLocalizedTitle(exercise)}</span>
                       </span>
                       <DifficultyDot difficulty={exercise.difficulty} />

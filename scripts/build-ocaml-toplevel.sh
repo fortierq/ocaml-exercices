@@ -4,7 +4,7 @@
 
 set -e
 
-echo "🐫 Building OCaml Toplevel..."
+echo "Building OCaml Toplevel..."
 
 eval $(opam env)
 
@@ -45,17 +45,17 @@ let () =
   
   (* Signal ready *)
   Js.Unsafe.global##.ocamlToplevelReady := Js._true;
-  Firebug.console##log (Js.string "✅ OCaml toplevel ready!")
+  Firebug.console##log (Js.string "OCaml toplevel ready!")
 OCAML_EOF
 
-echo "🔨 Compiling OCaml to bytecode..."
+echo "Compiling OCaml to bytecode..."
 ocamlfind ocamlc \
   -package js_of_ocaml,js_of_ocaml-toplevel,js_of_ocaml-ppx \
   -linkpkg \
   /tmp/toplevel_main.ml \
   -o /tmp/toplevel.byte
 
-echo "🔨 Converting to JavaScript with js_of_ocaml..."
+echo "Converting to JavaScript with js_of_ocaml..."
 js_of_ocaml \
   --toplevel \
   +toplevel.js \
@@ -64,5 +64,5 @@ js_of_ocaml \
   -o "$OUTPUT_DIR/toplevel.js"
 
 echo ""
-echo "✅ Build complete!"
+echo "Build complete!"
 ls -lh "$OUTPUT_DIR/toplevel.js"

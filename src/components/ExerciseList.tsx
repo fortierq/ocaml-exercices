@@ -26,7 +26,6 @@ function DifficultyBadge({ difficulty }: { difficulty: Exercise['difficulty'] })
 }
 
 function ExerciseCard({ exercise }: { exercise: Exercise }) {
-  const isCompleted = localStorage.getItem(`completed-${exercise.id}`) === 'true';
   const { title, description, category } = useLocalizedExercise(exercise);
 
   return (
@@ -38,11 +37,6 @@ function ExerciseCard({ exercise }: { exercise: Exercise }) {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
           {title}
         </h3>
-        {isCompleted && (
-          <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-        )}
       </div>
       
       <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
@@ -57,25 +51,6 @@ function ExerciseCard({ exercise }: { exercise: Exercise }) {
       </div>
     </Link>
   );
-}
-
-// Helper to get category icon
-function getCategoryIcon(category: string): string {
-  const icons: Record<string, string> = {
-    'Basics': '📝',
-    'Recursion': '🔄',
-    'Lists': '📋',
-    'Higher-Order Functions': '⚡',
-    'Trees': '🌳',
-    'Options': '❓',
-    'Sorting': '📊',
-    'Interpreters': '🔧',
-    'Binary Search Trees': '🌲',
-    'Heaps': '📚',
-    'Hash Tables': '🗂️',
-    'Graphs': '🕸️',
-  };
-  return icons[category] || '📄';
 }
 
 export default function ExerciseList() {
@@ -124,7 +99,7 @@ export default function ExerciseList() {
           </div>
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              🐫 {t('siteName')}
+              {t('siteName')}
             </h1>
             <p className="text-xl text-orange-100 max-w-2xl mx-auto">
               {t('siteDescription')}
@@ -142,15 +117,10 @@ export default function ExerciseList() {
             <div className="flex-1">
               <label htmlFor="search" className="sr-only">{t('searchPlaceholder')}</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
                 <input
                   type="text"
                   id="search"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="block w-full pl-3 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder={t('searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -223,8 +193,7 @@ export default function ExerciseList() {
         {/* Exercise list grouped by category */}
         {Object.entries(exercisesByCategory).map(([category, categoryExercises]) => (
           <div key={category} className="mb-10">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-              <span className="mr-2">{getCategoryIcon(category)}</span>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               {getLocalizedCategory(category)}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -36,7 +36,7 @@ class OCamlToplevel {
         const checkReady = (attempts = 0) => {
           if (window.ocamlToplevelReady && window.caml) {
             this.initialized = true;
-            console.log('✅ OCaml toplevel initialized');
+            console.log('OCaml toplevel initialized');
             resolve();
           } else if (attempts < 50) {
             setTimeout(() => checkReady(attempts + 1), 100);
@@ -50,7 +50,7 @@ class OCamlToplevel {
 
       script.onerror = () => {
         this.initFailed = true;
-        console.info('ℹ️ OCaml toplevel not built - using simulation mode');
+        console.info('OCaml toplevel not built - using simulation mode');
         console.info('   Run "npm run build:ocaml" to build the real toplevel');
         reject(new Error('Toplevel script not found'));
       };
@@ -167,7 +167,7 @@ class OCamlToplevel {
       if (!hasFailwith && code.includes('assert')) {
         return {
           success: true,
-          output: outputs.join('\n') + '\n\n⚠️ Mode simulation - tests non vérifiés.',
+          output: outputs.join('\n') + '\n\nMode simulation - tests non vérifiés.',
         };
       }
       
@@ -224,7 +224,7 @@ let __assert_eq expr_str result expected =
     failwith (Printf.sprintf "Test %d: %s FAILED" !__test_num expr_str)
 
 let __test_pass () =
-  print_endline ("✅ All " ^ string_of_int !__test_num ^ " tests passed!")
+  print_endline ("All " ^ string_of_int !__test_num ^ " tests passed!")
 `;
 
 // Detect if a value is an integer literal

@@ -19,10 +19,6 @@ function OutputPanel({ result, isRunning }: OutputPanelProps) {
     return (
       <div className={`rounded-lg p-4 font-mono text-sm h-full flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
         <div className={`flex items-center space-x-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
           <span>{t('runningOCaml')}</span>
         </div>
       </div>
@@ -45,19 +41,9 @@ function OutputPanel({ result, isRunning }: OutputPanelProps) {
     }`}>
       <div className="flex items-center space-x-2 mb-2">
         {result.success ? (
-          <>
-            <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <span className="text-green-500 font-semibold">{t('success')}</span>
-          </>
+          <span className="text-green-500 font-semibold">{t('success')}</span>
         ) : (
-          <>
-            <svg className="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            <span className="text-red-500 font-semibold">{t('error')}</span>
-          </>
+          <span className="text-red-500 font-semibold">{t('error')}</span>
         )}
       </div>
       <pre className={`whitespace-pre-wrap ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{result.output}</pre>
@@ -358,23 +344,7 @@ export default function ExerciseView() {
                   disabled={isRunning}
                   className="inline-flex items-center px-4 py-2.5 sm:py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-sm sm:text-base font-medium rounded-lg transition-colors"
                 >
-                  {isRunning ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      {t('running')}
-                    </>
-                  ) : (
-                    <>
-                      <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {t('runTests')}
-                    </>
-                  )}
+                  {isRunning ? t('running') : t('runTests')}
                 </button>
               </div>
             </div>
