@@ -40,7 +40,7 @@ let () =
   );
   (* Signal ready *)
   Js.Unsafe.global##.ocamlToplevelReady := Js._true;
-  Firebug.console##log (Js.string "✅ OCaml toplevel ready!")
+  Firebug.console##log (Js.string "OCaml toplevel ready!")
 OCAML_EOF
 
 # Compile the toplevel
