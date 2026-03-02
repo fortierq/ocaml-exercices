@@ -18,8 +18,16 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     if (stored === 'en' || stored === 'fr') {
       return stored;
     }
-    // Default to French
-    return 'fr';
+
+    const browserLanguages = navigator.languages?.length
+      ? navigator.languages
+      : [navigator.language];
+
+    const prefersFrench = browserLanguages.some((lang) =>
+      lang.toLowerCase().startsWith('fr')
+    );
+
+    return prefersFrench ? 'fr' : 'en';
   });
 
   useEffect(() => {
