@@ -4,6 +4,10 @@ export const translations = {
     siteName: 'OCaml Exercises',
     siteDescription: 'Learn OCaml through interactive coding exercises. Write code, run tests, and master functional programming.',
     backToExercises: 'Back to exercises',
+    hideSidebar: 'Hide exercise navigation',
+    showSidebar: 'Show exercise navigation',
+    resizeNavigation: 'Resize exercise navigation',
+    resizeExercise: 'Resize description and editor columns',
     
     // Exercise List
     searchPlaceholder: 'Search exercises...',
@@ -72,6 +76,10 @@ export const translations = {
     siteName: 'Exercices OCaml',
     siteDescription: 'Apprenez OCaml avec des exercices de programmation interactifs. Écrivez du code, exécutez des tests et maîtrisez la programmation fonctionnelle.',
     backToExercises: 'Retour aux exercices',
+    hideSidebar: 'Masquer la navigation des exercices',
+    showSidebar: 'Afficher la navigation des exercices',
+    resizeNavigation: 'Redimensionner la navigation des exercices',
+    resizeExercise: 'Redimensionner les colonnes énoncé et éditeur',
     
     // Exercise List
     searchPlaceholder: 'Rechercher des exercices...',

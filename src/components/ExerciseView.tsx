@@ -1,6 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import CodeEditor from './CodeEditor';
+import ResizeHandle from './ResizeHandle';
+import { useLayoutPreference } from '../hooks/useLayoutPreference';
 import { getExerciseById, type Exercise } from '../data/exercises';
 import { executeWithTests, type ExecutionResult } from '../lib/ocaml-toplevel';
 import { useI18n, useLocalizedExercise } from '../i18n';
@@ -105,8 +107,26 @@ export default function ExerciseView() {
   const [showHints, setShowHints] = useState(false);
   const [currentHint, setCurrentHint] = useState(0);
 
-  // Get localized content
-  const localizedExercise = exercise ? useLocalizedExercise(exercise) : null;
+  const columnsRef = useRef<HTMLDivElement>(null);
+  const [columnsWidth, setColumnsWidth] = useState(0);
+  const [detailsWidth, setDetailsWidth] = useLayoutPreference('layout-details-width', 34, 25, 60);
+  const wide = columnsWidth >= 600;
+  const minDetails = wide ? Math.max(25, 200 / (columnsWidth - 12) * 100) : 25;
+  const maxDetails = wide ? Math.min(60, 100 - 280 / (columnsWidth - 12) * 100) : 60;
+  const visibleDetailsWidth = Math.min(maxDetails, Math.max(minDetails, detailsWidth));
+
+  useEffect(() => {
+    const columns = columnsRef.current;
+    if (!columns) return;
+    const observer = new ResizeObserver(([entry]) => setColumnsWidth(entry.contentRect.width));
+    observer.observe(columns);
+    return () => observer.disconnect();
+  }, [exercise]);
+
+  // Keep hooks unconditional while the selected exercise is loading.
+  const localizedExercise = useLocalizedExercise(exercise ?? {
+    title: '', description: '', category: '', hints: []
+  });
 
   useEffect(() => {
     if (id) {
@@ -194,10 +214,10 @@ export default function ExerciseView() {
   }
 
   return (
-    <div className="min-h-screen lg:h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="exercise-view flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm flex-shrink-0">
-        <div className="px-4 sm:px-6 lg:px-8 py-3 pt-14 lg:pt-3">
+        <div className="px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
@@ -216,10 +236,14 @@ export default function ExerciseView() {
       </header>
 
       {/* Main content - fills remaining height */}
-      <main className="flex-1 overflow-auto lg:overflow-hidden p-3 sm:p-4">
-        <div className="h-full flex flex-col lg:grid lg:grid-cols-3 gap-3 sm:gap-4">
+      <main className="exercise-main p-3 sm:p-4">
+        <div
+          ref={columnsRef}
+          className={`exercise-columns ${wide ? 'exercise-columns-wide' : ''}`}
+          style={wide ? { gridTemplateColumns: `minmax(0, ${visibleDetailsWidth}fr) 12px minmax(0, ${100 - visibleDetailsWidth}fr)` } : undefined}
+        >
           {/* Left panel - Description and hints */}
-          <div className="flex flex-col space-y-3 sm:space-y-4 lg:overflow-y-auto lg:col-span-1">
+          <div id="exercise-details" className="exercise-details flex flex-col space-y-3 sm:space-y-4">
             {/* Description */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -300,11 +324,11 @@ export default function ExerciseView() {
             </div>
 
             {/* Test code preview */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 lg:flex-1 lg:flex lg:flex-col lg:min-h-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 exercise-flex-panel">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
                 {t('tests')}
               </h2>
-              <div className="h-[150px] sm:h-[180px] lg:flex-1 lg:min-h-0">
+              <div className="h-[150px] sm:h-[180px] exercise-fill">
                 <CodeEditor
                   value={exercise.tests}
                   onChange={() => {}}
@@ -315,10 +339,22 @@ export default function ExerciseView() {
             </div>
           </div>
 
+          {wide && (
+            <ResizeHandle
+              label={t('resizeExercise')}
+              controls="exercise-details"
+              value={visibleDetailsWidth}
+              min={minDetails}
+              max={maxDetails}
+              step={2}
+              unitsPerPixel={100 / (columnsWidth - 12)}
+              onChange={setDetailsWidth}
+            />
+          )}
           {/* Right panel - Editor and output */}
-          <div className="flex flex-col space-y-3 sm:space-y-4 lg:col-span-2 lg:h-full">
+          <div className="exercise-editor flex flex-col space-y-3 sm:space-y-4">
             {/* Code editor - takes most of the space */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 lg:flex-[2] lg:flex lg:flex-col lg:min-h-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 exercise-code-panel">
               <div className="flex items-center justify-between mb-2 flex-shrink-0">
                 <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                   {t('yourSolution')}
@@ -331,7 +367,7 @@ export default function ExerciseView() {
                 </button>
               </div>
               
-              <div className="h-[250px] sm:h-[300px] lg:flex-1 lg:min-h-0">
+              <div className="h-[250px] sm:h-[300px] exercise-fill">
                 <CodeEditor
                   value={code}
                   onChange={setCode}
@@ -350,11 +386,11 @@ export default function ExerciseView() {
             </div>
 
             {/* Output - scales with window */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 lg:flex-1 lg:flex lg:flex-col lg:min-h-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3 sm:p-4 flex-shrink-0 exercise-flex-panel">
               <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">
                 {t('output')}
               </h2>
-              <div className="h-[120px] sm:h-[150px] lg:flex-1 lg:min-h-0">
+              <div className="h-[120px] sm:h-[150px] exercise-fill">
                 <OutputPanel result={result} isRunning={isRunning} />
               </div>
             </div>

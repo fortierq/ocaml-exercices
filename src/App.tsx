@@ -1,6 +1,8 @@
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
-import { I18nProvider } from './i18n';
+import { useEffect, useRef, useState } from 'react';
+import { I18nProvider, useI18n } from './i18n';
+import ResizeHandle from './components/ResizeHandle';
+import { useLayoutPreference } from './hooks/useLayoutPreference';
 import { AppProvider, useApp } from './context/AppContext';
 import Sidebar from './components/Sidebar';
 import ExerciseView from './components/ExerciseView';
@@ -58,54 +60,88 @@ function MpiLink() {
   );
 }
 
-function HamburgerButton({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="lg:hidden p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-      aria-label="Toggle menu"
-    >
-      <span className="text-sm font-medium">{isOpen ? 'Close' : 'Menu'}</span>
-    </button>
-  );
-}
-
 function AppContent() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { t } = useI18n();
+  const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
+  const isDesktop = viewportWidth >= 1024;
+  const [sidebarVisible, setSidebarVisible] = useLayoutPreference('layout-sidebar-visible', 1, 0, 1);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useLayoutPreference('layout-sidebar-width', 288, 200, 480);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const isSidebarOpen = isDesktop ? Boolean(sidebarVisible) : mobileSidebarOpen;
+  const maxSidebarWidth = Math.max(200, Math.min(480, isDesktop ? viewportWidth - 640 : viewportWidth - 64));
+  const visibleSidebarWidth = Math.min(sidebarWidth, maxSidebarWidth);
 
-  const closeSidebar = () => setIsSidebarOpen(false);
+  useEffect(() => {
+    const onResize = () => {
+      setViewportWidth(window.innerWidth);
+      setMobileSidebarOpen(false);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const closeSidebar = () => {
+    if (isDesktop) setSidebarVisible(0);
+    else setMobileSidebarOpen(false);
+    toggleRef.current?.focus();
+  };
 
   return (
     <Router>
-      <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
-        {/* Mobile overlay */}
-        {isSidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-            onClick={closeSidebar}
-          />
-        )}
-        
-        {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:relative lg:translate-x-0`}>
-          <Sidebar onNavigate={closeSidebar} />
-        </div>
-        
-        <main className="flex-1 overflow-auto w-full">
-          <div className="fixed top-4 right-4 z-20 flex items-center space-x-2">
-            <HamburgerButton isOpen={isSidebarOpen} onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <div className="app-shell bg-gray-100 dark:bg-gray-900" onKeyDown={event => {
+        if (event.key === 'Escape' && isSidebarOpen) closeSidebar();
+      }}>
+        <div className="app-toolbar bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <button
+            ref={toggleRef}
+            onClick={() => isDesktop ? setSidebarVisible(isSidebarOpen ? 0 : 1) : setMobileSidebarOpen(!isSidebarOpen)}
+            className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+            aria-label={isSidebarOpen ? t('hideSidebar') : t('showSidebar')}
+            title={isSidebarOpen ? t('hideSidebar') : t('showSidebar')}
+            aria-controls="exercise-navigation"
+            aria-expanded={isSidebarOpen}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" strokeWidth="2" />
+              <path d="M9 4v16" strokeWidth="2" />
+              <path d={isSidebarOpen ? 'm16 9-3 3 3 3' : 'm13 9 3 3-3 3'} strokeWidth="2" />
+            </svg>
+          </button>
+          <div className="flex items-center gap-2">
             <GitHubLink />
             <MpiLink />
             <DarkModeToggle />
             <LanguageSwitcher />
           </div>
-          <Routes>
-            <Route path="/" element={<Navigate to="/exercise/factorial" replace />} />
-            <Route path="/exercise/:id" element={<ExerciseView />} />
-          </Routes>
-        </main>
+        </div>
+        <div className="app-body">
+          {isSidebarOpen && !isDesktop && (
+            <div className="fixed inset-0 top-16 bg-black/50 z-30" onClick={closeSidebar} />
+          )}
+          <div
+            id="exercise-navigation"
+            hidden={!isSidebarOpen}
+            className={isDesktop ? 'navigation-panel' : 'navigation-panel navigation-drawer'}
+            style={{ width: visibleSidebarWidth }}
+          >
+            <Sidebar onNavigate={() => { if (!isDesktop) closeSidebar(); }} />
+            <ResizeHandle
+              label={t('resizeNavigation')}
+              controls="exercise-navigation"
+              value={visibleSidebarWidth}
+              min={200}
+              max={maxSidebarWidth}
+              onChange={setSidebarWidth}
+            />
+          </div>
+          <main className="workspace">
+            <Routes>
+              <Route path="/" element={<Navigate to="/exercise/factorial" replace />} />
+              <Route path="/exercise/:id" element={<ExerciseView />} />
+            </Routes>
+          </main>
+        </div>
       </div>
     </Router>
   );
