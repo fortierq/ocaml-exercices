@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { I18nProvider, useI18n } from './i18n';
 import ResizeHandle from './components/ResizeHandle';
@@ -93,22 +93,27 @@ function AppContent() {
         if (event.key === 'Escape' && isSidebarOpen) closeSidebar();
       }}>
         <div className="app-toolbar bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <button
-            ref={toggleRef}
-            onClick={() => isDesktop ? setSidebarVisible(isSidebarOpen ? 0 : 1) : setMobileSidebarOpen(!isSidebarOpen)}
-            className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
-            aria-label={isSidebarOpen ? t('hideSidebar') : t('showSidebar')}
-            title={isSidebarOpen ? t('hideSidebar') : t('showSidebar')}
-            aria-controls="exercise-navigation"
-            aria-expanded={isSidebarOpen}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="3" y="4" width="18" height="16" rx="2" strokeWidth="2" />
-              <path d="M9 4v16" strokeWidth="2" />
-              <path d={isSidebarOpen ? 'm16 9-3 3 3 3' : 'm13 9 3 3-3 3'} strokeWidth="2" />
-            </svg>
-          </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              ref={toggleRef}
+              onClick={() => isDesktop ? setSidebarVisible(isSidebarOpen ? 0 : 1) : setMobileSidebarOpen(!isSidebarOpen)}
+              className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+              aria-label={isSidebarOpen ? t('hideSidebar') : t('showSidebar')}
+              title={isSidebarOpen ? t('hideSidebar') : t('showSidebar')}
+              aria-controls="exercise-navigation"
+              aria-expanded={isSidebarOpen}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2" strokeWidth="2" />
+                <path d="M9 4v16" strokeWidth="2" />
+                <path d={isSidebarOpen ? 'm16 9-3 3 3 3' : 'm13 9 3 3-3 3'} strokeWidth="2" />
+              </svg>
+            </button>
+            <Link to="/" className="site-title font-bold text-lg text-gray-900 dark:text-gray-100 whitespace-nowrap">
+              {t('siteName')}
+            </Link>
+          </div>
+          <div className="toolbar-actions flex items-center gap-2">
             <GitHubLink />
             <MpiLink />
             <DarkModeToggle />

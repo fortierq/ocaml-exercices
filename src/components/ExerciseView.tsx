@@ -75,27 +75,6 @@ function renderWithCode(text: string) {
   });
 }
 
-function DifficultyBadge({ difficulty }: { difficulty: Exercise['difficulty'] }) {
-  const { t } = useI18n();
-  const colors = {
-    easy: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    hard: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-  };
-
-  const labels = {
-    easy: t('easy'),
-    medium: t('medium'),
-    hard: t('hard')
-  };
-
-  return (
-    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[difficulty]}`}>
-      {labels[difficulty]}
-    </span>
-  );
-}
-
 export default function ExerciseView() {
   const { t } = useI18n();
   const { id } = useParams<{ id: string }>();
@@ -215,26 +194,6 @@ export default function ExerciseView() {
 
   return (
     <div className="exercise-view flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm flex-shrink-0">
-        <div className="px-4 sm:px-6 py-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
-                {localizedExercise.title}
-              </h1>
-              <div className="flex items-center space-x-2 mt-1">
-                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                  {localizedExercise.category}
-                </span>
-                <span className="text-gray-300 dark:text-gray-600">•</span>
-                <DifficultyBadge difficulty={exercise.difficulty} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Main content - fills remaining height */}
       <main className="exercise-main p-3 sm:p-4">
         <div
