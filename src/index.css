@@ -238,3 +238,34 @@
   outline: 2px solid #ea580c;
   outline-offset: -2px;
 }
+
+/* Keep the site name and all toolbar controls on one row on small screens. */
+.site-title {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 639px) {
+  .app-toolbar {
+    gap: 4px;
+    padding-inline: 8px;
+  }
+
+  .app-toolbar .toolbar-actions {
+    gap: 4px;
+  }
+
+  .app-toolbar button,
+  .app-toolbar a:not(.site-title) {
+    min-width: 32px;
+    min-height: 40px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .site-title {
+    font-size: 12px;
+  }
+}
