@@ -289,6 +289,326 @@ let () =
       'fold_left est récursif terminal'
     ]
   },
+  // Union types and records
+  {
+    id: 'union-traffic-light',
+    title: 'Traffic Lights',
+    titleFr: 'Feux de circulation',
+    description: 'The union type `light` represents a traffic light. Write `next_light : light -> light` for the cycle Red → Green → Orange → Red, then `can_go : light -> bool`, which is true only for Green. For example, `next_light Orange` returns `Red`.',
+    descriptionFr: 'Le type union `light` représente un feu de circulation. Écrivez `next_light : light -> light` pour le cycle Red → Green → Orange → Red, puis `can_go : light -> bool`, qui vaut vrai uniquement pour Green. Par exemple, `next_light Orange` retourne `Red`.',
+    difficulty: 'easy',
+    category: 'Union Types',
+    categoryFr: 'Types union',
+    starterCode: `type light = Red | Green | Orange
+
+let next_light light =
+  failwith "TODO"
+
+let can_go light =
+  failwith "TODO"`,
+    solution: `type light = Red | Green | Orange
+
+let next_light light =
+  match light with
+  | Red -> Green
+  | Green -> Orange
+  | Orange -> Red
+
+let can_go light =
+  match light with
+  | Green -> true
+  | Red | Orange -> false`,
+    tests: `(* Tests *)
+let () =
+  assert (next_light Red = Green);
+  assert (next_light Green = Orange);
+  assert (next_light Orange = Red);
+  assert (can_go Red = false);
+  assert (can_go Green = true);
+  assert (can_go Orange = false);
+  print_endline "All tests passed!"`,
+    hints: [
+      'Use `match light with` to inspect the constructor.',
+      'Cover all three constructors in `next_light`.',
+      'The pattern `Red | Orange` groups two cases with the same result.'
+    ],
+    hintsFr: [
+      'Utilisez `match light with` pour examiner le constructeur.',
+      'Traitez les trois constructeurs dans `next_light`.',
+      'Le motif `Red | Orange` regroupe deux cas donnant le même résultat.'
+    ]
+  },
+  {
+    id: 'union-shape-area',
+    title: 'Area of a Shape',
+    titleFr: 'Aire d’une forme',
+    description: 'The union type `shape` carries dimensions: a square side, rectangle width and height, or circle radius. Write `area : shape -> float`. Dimensions are nonnegative; use `Float.pi` for π. For example, `area (Rectangle (3., 4.))` returns `12.`.',
+    descriptionFr: 'Le type union `shape` contient des dimensions : côté d’un carré, largeur et hauteur d’un rectangle, ou rayon d’un cercle. Écrivez `area : shape -> float`. Les dimensions sont positives ou nulles ; utilisez `Float.pi` pour π. Par exemple, `area (Rectangle (3., 4.))` retourne `12.`.',
+    difficulty: 'easy',
+    category: 'Union Types',
+    categoryFr: 'Types union',
+    starterCode: `type shape =
+  | Square of float
+  | Rectangle of float * float
+  | Circle of float
+
+let area shape =
+  failwith "TODO"`,
+    solution: `type shape =
+  | Square of float
+  | Rectangle of float * float
+  | Circle of float
+
+let area shape =
+  match shape with
+  | Square side -> side *. side
+  | Rectangle (width, height) -> width *. height
+  | Circle radius -> Float.pi *. radius *. radius`,
+    tests: `(* Tests *)
+let () =
+  assert (area (Square 3.) = 9.);
+  assert (area (Rectangle (3., 4.)) = 12.);
+  assert (area (Rectangle (2.5, 4.)) = 10.);
+  assert (abs_float (area (Circle 2.) -. 4. *. Float.pi) < 1e-9);
+  assert (area (Square 0.) = 0.);
+  assert (area (Rectangle (0., 5.)) = 0.);
+  assert (area (Circle 0.) = 0.);
+  print_endline "All tests passed!"`,
+    hints: [
+      'Match each constructor to extract its dimensions.',
+      'Use `*.` to multiply floating-point numbers.',
+      'The area of a circle is π times the square of its radius.'
+    ],
+    hintsFr: [
+      'Filtrez chaque constructeur pour extraire ses dimensions.',
+      'Utilisez `*.` pour multiplier des flottants.',
+      'L’aire d’un cercle vaut π multiplié par le carré du rayon.'
+    ]
+  },
+  {
+    id: 'union-expression-eval',
+    title: 'Evaluate an Expression',
+    titleFr: 'Évaluer une expression',
+    description: 'The recursive union type `expr` represents integer expressions. Write `eval : expr -> int`: `Int` holds a value, `Add` adds two expressions, `Mul` multiplies them and `Neg` negates an expression. For example, `eval (Mul (Int 3, Add (Int 1, Int 2)))` returns `9`.',
+    descriptionFr: 'Le type union récursif `expr` représente des expressions entières. Écrivez `eval : expr -> int` : `Int` contient une valeur, `Add` additionne deux expressions, `Mul` les multiplie et `Neg` prend l’opposé d’une expression. Par exemple, `eval (Mul (Int 3, Add (Int 1, Int 2)))` retourne `9`.',
+    difficulty: 'medium',
+    category: 'Union Types',
+    categoryFr: 'Types union',
+    starterCode: `type expr =
+  | Int of int
+  | Add of expr * expr
+  | Mul of expr * expr
+  | Neg of expr
+
+let rec eval expression =
+  failwith "TODO"`,
+    solution: `type expr =
+  | Int of int
+  | Add of expr * expr
+  | Mul of expr * expr
+  | Neg of expr
+
+let rec eval expression =
+  match expression with
+  | Int n -> n
+  | Add (left, right) -> eval left + eval right
+  | Mul (left, right) -> eval left * eval right
+  | Neg inner -> -(eval inner)`,
+    tests: `(* Tests *)
+let () =
+  assert (eval (Int 0) = 0);
+  assert (eval (Int (-7)) = -7);
+  assert (eval (Add (Int 2, Int 5)) = 7);
+  assert (eval (Mul (Int 3, Add (Int 1, Int 2))) = 9);
+  assert (eval (Neg (Int 4)) = -4);
+  assert (eval (Neg (Neg (Int 4))) = 4);
+  assert (eval (Add (Neg (Mul (Int 2, Int 3)), Int 1)) = -5);
+  assert (eval (Mul (Int 0, Neg (Int 8))) = 0);
+  print_endline "All tests passed!"`,
+    hints: [
+      'An `Int` is the base case.',
+      'Recursively evaluate both operands of `Add` and `Mul`.',
+      '`Neg inner` returns the opposite of `eval inner`.'
+    ],
+    hintsFr: [
+      'Un constructeur `Int` constitue le cas de base.',
+      'Évaluez récursivement les deux opérandes de `Add` et `Mul`.',
+      '`Neg inner` retourne l’opposé de `eval inner`.'
+    ]
+  },
+  {
+    id: 'record-point',
+    title: 'Create and Translate a Point',
+    titleFr: 'Créer et déplacer un point',
+    description: 'Using the record type `point`, write `make_point : float -> float -> point` and `translate : point -> float -> float -> point`. Translation adds dx to x and dy to y and returns a new point. For example, translating (1., 2.) by (3., -1.) gives (4., 1.).',
+    descriptionFr: 'Avec le type enregistrement `point`, écrivez `make_point : float -> float -> point` et `translate : point -> float -> float -> point`. La translation ajoute dx à x et dy à y et retourne un nouveau point. Par exemple, déplacer (1., 2.) de (3., -1.) donne (4., 1.).',
+    difficulty: 'easy',
+    category: 'Records',
+    categoryFr: 'Enregistrements',
+    starterCode: `type point = { x : float; y : float }
+
+let make_point x y =
+  failwith "TODO"
+
+let translate point dx dy =
+  failwith "TODO"`,
+    solution: `type point = { x : float; y : float }
+
+let make_point x y = { x = x; y = y }
+
+let translate point dx dy =
+  { x = point.x +. dx; y = point.y +. dy }`,
+    tests: `(* Tests *)
+let () =
+  let origin = make_point 0. 0. in
+  assert (origin.x = 0.);
+  assert (origin.y = 0.);
+  let p = make_point 1. 2. in
+  assert (p.x = 1.);
+  assert (p.y = 2.);
+  let moved = translate p 3. (-1.) in
+  assert (moved.x = 4.);
+  assert (moved.y = 1.);
+  assert (translate p 0. 0. = p);
+  let negative = translate origin (-2.5) (-3.) in
+  assert (negative.x = -2.5);
+  assert (negative.y = -3.);
+  assert (p.x = 1.);
+  assert (p.y = 2.);
+  print_endline "All tests passed!"`,
+    hints: [
+      'Construct a record with `{ x = ...; y = ... }`.',
+      'Read fields with `point.x` and `point.y`.',
+      'Use `+.` for floating-point addition.'
+    ],
+    hintsFr: [
+      'Construisez un enregistrement avec `{ x = ...; y = ... }`.',
+      'Accédez aux champs avec `point.x` et `point.y`.',
+      'Utilisez `+.` pour additionner des flottants.'
+    ]
+  },
+  {
+    id: 'record-student',
+    title: 'Update a Student Record',
+    titleFr: 'Mettre à jour une fiche étudiant',
+    description: 'Write `add_grade : student -> int -> student`, which returns a new record with the grade prepended to `grades` and the name preserved. Grades are integers from 0 to 20. Then write `average : student -> float option`, returning `None` when there are no grades. For grades [12; 15], return `Some 13.5`.',
+    descriptionFr: 'Écrivez `add_grade : student -> int -> student`, qui retourne un nouvel enregistrement avec la note ajoutée en tête de `grades` et le nom conservé. Les notes sont des entiers entre 0 et 20. Écrivez ensuite `average : student -> float option`, qui retourne `None` en l’absence de notes. Pour les notes [12; 15], retournez `Some 13.5`.',
+    difficulty: 'medium',
+    category: 'Records',
+    categoryFr: 'Enregistrements',
+    starterCode: `type student = { name : string; grades : int list }
+
+let add_grade student grade =
+  failwith "TODO"
+
+let average student =
+  failwith "TODO"`,
+    solution: `type student = { name : string; grades : int list }
+
+let add_grade student grade =
+  { student with grades = grade :: student.grades }
+
+let average student =
+  match student.grades with
+  | [] -> None
+  | grades ->
+    let total = List.fold_left (+) 0 grades in
+    Some (float_of_int total /. float_of_int (List.length grades))`,
+    tests: `(* Tests *)
+let () =
+  let student = { name = "Ada"; grades = [12; 15] } in
+  let updated = add_grade student 18 in
+  assert (updated.name = "Ada");
+  assert (updated.grades = [18; 12; 15]);
+  assert (student.grades = [12; 15]);
+  assert (average student = Some 13.5);
+  assert (average updated = Some 15.);
+  let empty = { name = "Sam"; grades = [] } in
+  assert (average empty = None);
+  let first = add_grade empty 0 in
+  assert (first.name = "Sam");
+  assert (first.grades = [0]);
+  assert (average first = Some 0.);
+  assert (average (add_grade empty 20) = Some 20.);
+  assert (empty.grades = []);
+  print_endline "All tests passed!"`,
+    hints: [
+      'Use `{ student with grades = ... }` to preserve other fields.',
+      'Handle the empty list before dividing.',
+      'Convert the sum and count with `float_of_int` before using `/.`.'
+    ],
+    hintsFr: [
+      'Utilisez `{ student with grades = ... }` pour conserver les autres champs.',
+      'Traitez la liste vide avant de diviser.',
+      'Convertissez la somme et l’effectif avec `float_of_int` avant d’utiliser `/.`.'
+    ]
+  },
+  {
+    id: 'record-library-loan',
+    title: 'Borrow and Return a Book',
+    titleFr: 'Emprunter et rendre un livre',
+    description: 'Combine records and union types to manage a book. Write `borrow : book -> string -> book option`: an Available book becomes Borrowed with the borrower name and is returned inside Some; an already borrowed book gives None. Write `return_book : book -> book`, setting its status to Available even if it was already available. Preserve the title and the original record.',
+    descriptionFr: 'Combinez enregistrements et types union pour gérer un livre. Écrivez `borrow : book -> string -> book option` : un livre Available devient Borrowed avec le nom de l’emprunteur et est retourné dans Some ; un livre déjà emprunté donne None. Écrivez `return_book : book -> book`, qui remet son statut à Available, même s’il était déjà disponible. Conservez le titre et l’enregistrement initial.',
+    difficulty: 'medium',
+    category: 'Records',
+    categoryFr: 'Enregistrements',
+    starterCode: `type status = Available | Borrowed of string
+
+type book = { title : string; status : status }
+
+let borrow book borrower =
+  failwith "TODO"
+
+let return_book book =
+  failwith "TODO"`,
+    solution: `type status = Available | Borrowed of string
+
+type book = { title : string; status : status }
+
+let borrow book borrower =
+  match book.status with
+  | Available -> Some { book with status = Borrowed borrower }
+  | Borrowed _ -> None
+
+let return_book book =
+  { book with status = Available }`,
+    tests: `(* Tests *)
+let () =
+  let book = { title = "OCaml"; status = Available } in
+  let loan = match borrow book "Ada" with
+    | Some loan -> loan
+    | None -> failwith "An available book must be borrowable"
+  in
+  assert (loan.title = "OCaml");
+  assert (loan.status = Borrowed "Ada");
+  assert (book.status = Available);
+  assert (borrow loan "Sam" = None);
+  assert (borrow loan "Ada" = None);
+  let returned = return_book loan in
+  assert (returned.title = "OCaml");
+  assert (returned.status = Available);
+  assert (loan.status = Borrowed "Ada");
+  assert (return_book book = book);
+  let other = { title = "Algorithms"; status = Available } in
+  let second = match borrow other "Sam" with
+    | Some loan -> loan
+    | None -> failwith "An available book must be borrowable"
+  in
+  assert (second.title = "Algorithms");
+  assert (second.status = Borrowed "Sam");
+  assert (borrow returned "Sam" = borrow book "Sam");
+  print_endline "All tests passed!"`,
+    hints: [
+      'Pattern match on `book.status`.',
+      'Use a record update inside `Some` for a successful loan.',
+      '`Borrowed _` matches any borrower; returning a book simply replaces its status.'
+    ],
+    hintsFr: [
+      'Effectuez un filtrage par motif sur `book.status`.',
+      'Placez une copie mise à jour de l’enregistrement dans `Some` pour un emprunt réussi.',
+      '`Borrowed _` accepte tout emprunteur ; rendre un livre remplace simplement son statut.'
+    ]
+  },
   {
     id: 'binary-tree',
     title: 'Binary Tree Size',
