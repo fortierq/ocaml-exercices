@@ -70,7 +70,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   const { isDarkMode } = useApp();
 
   return (
-    <aside className={`w-72 flex flex-col h-screen sticky top-0 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900 border-r border-gray-200'}`}>
+    <aside className={`min-w-0 flex-1 flex flex-col h-full ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900 border-r border-gray-200'}`}>
       {/* Header */}
       <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
         <NavLink to="/" className="flex items-center space-x-2">
