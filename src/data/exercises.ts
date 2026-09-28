@@ -289,6 +289,122 @@ let () =
       'fold_left est récursif terminal'
     ]
   },
+  {
+    id: 'tuple-sum-swap',
+    title: 'Sum and Swap a Pair',
+    titleFr: 'Sommer et permuter une paire',
+    description: `Write \`sum_pair : int * int -> int\`, which returns the sum of the two integers in a pair. Then write \`swap : 'a * 'b -> 'b * 'a\`, which returns the same pair with its components reversed. Use tuple unpacking with \`let a, b = pair\`.`,
+    descriptionFr: `Écrivez \`sum_pair : int * int -> int\`, qui retourne la somme des deux entiers d’une paire. Écrivez ensuite \`swap : 'a * 'b -> 'b * 'a\`, qui retourne la même paire avec ses composantes inversées. Utilisez le déballage d’un tuple avec \`let a, b = pair\`.`,
+    difficulty: 'easy',
+    category: 'Tuples',
+    categoryFr: 'Tuples',
+    starterCode: `(* Unpack a tuple with let *)
+let sum_pair pair =
+  failwith "TODO"
+
+let swap pair =
+  failwith "TODO"`,
+    solution: `let sum_pair pair =
+  let a, b = pair in
+  a + b
+
+let swap pair =
+  let a, b = pair in
+  (b, a)`,
+    tests: `(* Tests *)
+let () =
+  assert (sum_pair (2, 3) = 5);
+  assert (sum_pair (-4, 10) = 6);
+  assert (swap (1, 2) = (2, 1));
+  assert (swap ("left", true) = (true, "left"));
+  let original = (7, 9) in
+  assert (swap (swap original) = original);
+  print_endline "All tests passed!"`,
+    hints: [
+      'Use `let a, b = pair in ...` to give names to both components.',
+      'After unpacking, `a` is the first element and `b` is the second.',
+      'To swap a pair, rebuild it as `(b, a)`.'
+    ],
+    hintsFr: [
+      'Utilisez `let a, b = pair in ...` pour donner un nom aux deux composantes.',
+      'Après le déballage, `a` est le premier élément et `b` le second.',
+      'Pour permuter une paire, reconstruisez-la sous la forme `(b, a)`.'
+    ]
+  },
+  {
+    id: 'tuple-translate-vector',
+    title: 'Translate a Point with a Vector',
+    titleFr: 'Déplacer un point avec un vecteur',
+    description: 'Represent a point as a tuple `(x, y)`. Write `translate : int * int -> int * int -> int * int` so that `translate (x, y) (dx, dy)` returns `(x + dx, y + dy)`. Define the function with tuple patterns directly in its parameters: `let translate (x, y) (dx, dy) = ...`.',
+    descriptionFr: 'Représentez un point par le tuple `(x, y)`. Écrivez `translate : int * int -> int * int -> int * int` de sorte que `translate (x, y) (dx, dy)` retourne `(x + dx, y + dy)`. Définissez la fonction avec des motifs de tuple directement dans ses paramètres : `let translate (x, y) (dx, dy) = ...`.',
+    difficulty: 'easy',
+    category: 'Tuples',
+    categoryFr: 'Tuples',
+    starterCode: `(* Destructure tuples directly in the parameters *)
+let translate point delta =
+  failwith "TODO"`,
+    solution: `let translate (x, y) (dx, dy) =
+  (x + dx, y + dy)`,
+    tests: `(* Tests *)
+let () =
+  assert (translate (0, 0) (0, 0) = (0, 0));
+  assert (translate (1, 2) (3, -1) = (4, 1));
+  assert (translate (-5, 4) (2, 3) = (-3, 7));
+  assert (translate (10, -10) (-10, 10) = (0, 0));
+  print_endline "All tests passed!"`,
+    hints: [
+      'A function parameter can itself be a tuple pattern.',
+      'The first tuple gives the starting coordinates.',
+      'The second tuple gives what must be added to x and y.'
+    ],
+    hintsFr: [
+      'Un paramètre de fonction peut lui-même être un motif de tuple.',
+      'Le premier tuple donne les coordonnées de départ.',
+      'Le second tuple indique ce qu’il faut ajouter à x et à y.'
+    ]
+  },
+  {
+    id: 'tuple-quadrant',
+    title: 'Find the Quadrant',
+    titleFr: 'Trouver le quadrant',
+    description: 'Write `quadrant : int * int -> string` for a point `(x, y)`. Return `"origin"` for `(0, 0)`, `"x-axis"` when `y = 0` but `x <> 0`, `"y-axis"` when `x = 0` but `y <> 0`, `"I"` when `x > 0` and `y > 0`, `"II"` when `x < 0` and `y > 0`, `"III"` when `x < 0` and `y < 0`, and `"IV"` when `x > 0` and `y < 0`. Use `match` on the tuple.',
+    descriptionFr: 'Écrivez `quadrant : int * int -> string` pour un point `(x, y)`. Retournez `"origin"` pour `(0, 0)`, `"x-axis"` quand `y = 0` mais `x <> 0`, `"y-axis"` quand `x = 0` mais `y <> 0`, `"I"` quand `x > 0` et `y > 0`, `"II"` quand `x < 0` et `y > 0`, `"III"` quand `x < 0` et `y < 0`, et `"IV"` quand `x > 0` et `y < 0`. Utilisez `match` sur le tuple.',
+    difficulty: 'medium',
+    category: 'Tuples',
+    categoryFr: 'Tuples',
+    starterCode: `(* Match on a tuple to distinguish cases *)
+let quadrant point =
+  failwith "TODO"`,
+    solution: `let quadrant point =
+  match point with
+  | (0, 0) -> "origin"
+  | (x, 0) when x <> 0 -> "x-axis"
+  | (0, y) when y <> 0 -> "y-axis"
+  | (x, y) when x > 0 && y > 0 -> "I"
+  | (x, y) when x < 0 && y > 0 -> "II"
+  | (x, y) when x < 0 && y < 0 -> "III"
+  | _ -> "IV"`,
+    tests: `(* Tests *)
+let () =
+  assert (quadrant (0, 0) = "origin");
+  assert (quadrant (3, 0) = "x-axis");
+  assert (quadrant (0, -2) = "y-axis");
+  assert (quadrant (4, 5) = "I");
+  assert (quadrant (-4, 5) = "II");
+  assert (quadrant (-4, -5) = "III");
+  assert (quadrant (4, -5) = "IV");
+  print_endline "All tests passed!"`,
+    hints: [
+      'Start with the most specific tuple patterns such as `(0, 0)`.',
+      'Guards (`when ...`) help distinguish axes from quadrants.',
+      'A final fallback case can cover the remaining quadrant.'
+    ],
+    hintsFr: [
+      'Commencez par les motifs de tuple les plus spécifiques comme `(0, 0)`.',
+      'Les gardes (`when ...`) aident à distinguer les axes des quadrants.',
+      'Un dernier cas générique peut couvrir le quadrant restant.'
+    ]
+  },
   // Union types and records
   {
     id: 'union-traffic-light',
